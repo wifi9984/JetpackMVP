@@ -1,3 +1,2 @@
-include ':framework'
 include ':app'
 rootProject.name = "JetpackMVP"
