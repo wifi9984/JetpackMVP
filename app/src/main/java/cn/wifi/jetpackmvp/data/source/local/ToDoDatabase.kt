@@ -15,9 +15,7 @@
  */
 package cn.wifi.jetpackmvp.data.source.local
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import cn.wifi.jetpackmvp.data.model.Task
 
@@ -28,25 +26,5 @@ import cn.wifi.jetpackmvp.data.model.Task
     Task::class
 ], version = 1)
 abstract class ToDoDatabase : RoomDatabase() {
-
-    abstract fun taskDao(): TasksDao?
-
-    companion object {
-        private var INSTANCE: ToDoDatabase? = null
-
-        private val sLock = Any()
-
-        open fun getInstance(context: Context): ToDoDatabase? {
-            synchronized(sLock) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(
-                        context.getApplicationContext(),
-                        ToDoDatabase::class.java, "Tasks.db"
-                    )
-                        .build()
-                }
-                return INSTANCE
-            }
-        }
-    }
+    abstract fun taskDao(): TasksDao
 }

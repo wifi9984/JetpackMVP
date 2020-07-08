@@ -15,6 +15,7 @@
  */
 package cn.wifi.jetpackmvp.data.source.local
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import cn.wifi.jetpackmvp.data.model.Task
 
@@ -23,6 +24,23 @@ import cn.wifi.jetpackmvp.data.model.Task
  */
 @Dao
 interface TasksDao {
+
+    /**
+     * Observes list of tasks.
+     *
+     * @return all tasks.
+     */
+    @Query("SELECT * FROM Tasks")
+    fun observeTasks(): LiveData<List<Task>>
+
+    /**
+     * Observes a single task.
+     *
+     * @param taskId the task id.
+     * @return the task with taskId.
+     */
+    @Query("SELECT * FROM Tasks WHERE entryid = :taskId")
+    fun observeTaskById(taskId: String): LiveData<Task>
 
     /**
      * Select all tasks from the tasks table.
@@ -61,7 +79,7 @@ interface TasksDao {
     /**
      * Update the complete status of a task
      *
-     * @param taskId    id of the task
+     * @param taskId id of the task
      * @param completed status to be updated
      */
     @Query("UPDATE tasks SET completed = :completed WHERE entryid = :taskId")

@@ -15,22 +15,26 @@
  */
 package cn.wifi.jetpackmvp.data.source
 
+import androidx.lifecycle.LiveData
 import cn.wifi.jetpackmvp.data.model.Task
 import cn.wifi.jetpackmvp.data.model.Result
 
 /**
  * Main entry point for accessing tasks data.
- * <p>
- * For simplicity, only getTasks() and getTask() have callbacks. Consider adding callbacks to other
- * methods to inform the user of network/database errors or successful operations.
- * For example, when a new task is created, it's synchronously stored in cache but usually every
- * operation on database or network should be executed in a different thread.
  */
 interface TasksDataSource {
 
+    fun observeTasks(): LiveData<Result<List<Task>>>
+
     suspend fun getTasks(): Result<List<Task>>
 
+    suspend fun refreshTasks()
+
+    fun observeTask(taskId: String): LiveData<Result<Task>>
+
     suspend fun getTask(taskId: String): Result<Task>
+
+    suspend fun refreshTask(taskId: String)
 
     suspend fun saveTask(task: Task)
 
