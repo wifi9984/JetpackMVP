@@ -3,13 +3,15 @@
     package="cn.wifi.jetpackmvp">
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:name=".TodoApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="cn.wifi.jetpackmvp.ui.main.MainActivity">
+        <activity android:name="cn.wifi.jetpackmvp.ui.tasks.TasksActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme.OverlapSystemBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
