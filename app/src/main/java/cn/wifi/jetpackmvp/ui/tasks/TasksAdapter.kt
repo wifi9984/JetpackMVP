@@ -6,58 +6,62 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import cn.wifi.jetpackmvp.R
 import cn.wifi.jetpackmvp.data.model.Task
+import cn.wifi.jetpackmvp.databinding.TaskItemBinding
 
-class TasksAdapter(tasks: List<Task>, private val itemListener: TaskItemListener)
-    : BaseAdapter() {
+/**
+ * Adapter for the task list. Has a reference to the [TasksViewModel] to send actions back to it.
+ */
+class TasksAdapter(private val viewModel: TasksViewModel) :
+    ListAdapter<Task, TasksAdapter.ViewHolder>(TaskDiffCallback()) {
 
-    var tasks: List<Task> = tasks
-        set(tasks) {
-            field = tasks
-            notifyDataSetChanged()
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = getItem(position)
+
+        holder.bind(viewModel, item)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder.from(parent)
+    }
+
+    class ViewHolder private constructor(val binding: TaskItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(viewModel: TasksViewModel, item: Task) {
+
+            binding.viewmodel = viewModel
+            binding.task = item
+            binding.executePendingBindings()
         }
 
-    override fun getCount() = tasks.size
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = TaskItemBinding.inflate(layoutInflater, parent, false)
 
-    override fun getItem(i: Int) = tasks[i]
-
-    override fun getItemId(i: Int) = i.toLong()
-
-    override fun getView(i: Int, view: View?, viewGroup: ViewGroup): View {
-        val task = getItem(i)
-        val rowView = view ?: LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.task_item, viewGroup, false)
-
-        with(rowView.findViewById<TextView>(R.id.title)) {
-            text = task.titleForList
-        }
-
-        with(rowView.findViewById<CheckBox>(R.id.complete_checkbox)) {
-            // Active/completed task UI
-            isChecked = task.isCompleted
-            val rowViewBackground =
-                if (task.isCompleted) R.drawable.list_completed_touch_feedback
-                else R.drawable.touch_feedback
-            rowView.setBackgroundResource(rowViewBackground)
-            setOnClickListener {
-                if (!task.isCompleted) {
-                    itemListener.onCompleteTaskClick(task)
-                } else {
-                    itemListener.onActivateTaskClick(task)
-                }
+                return ViewHolder(binding)
             }
         }
-        rowView.setOnClickListener { itemListener.onTaskClick(task) }
-        return rowView
     }
 }
 
-interface TaskItemListener {
+/**
+ * Callback for calculating the diff between two non-null items in a list.
+ *
+ * Used by ListAdapter to calculate the minimum number of changes between and old list and a new
+ * list that's been passed to `submitList`.
+ */
+class TaskDiffCallback : DiffUtil.ItemCallback<Task>() {
+    override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
+        return oldItem.id == newItem.id
+    }
 
-    fun onTaskClick(clickedTask: Task)
-
-    fun onCompleteTaskClick(completedTask: Task)
-
-    fun onActivateTaskClick(activatedTask: Task)
+    override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
+        return oldItem == newItem
+    }
 }

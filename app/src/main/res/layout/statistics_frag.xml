@@ -22,7 +22,7 @@
 
         <variable
             name="viewmodel"
-            type="com.example.android.architecture.blueprints.todoapp.statistics.StatisticsViewModel" />
+            type="cn.wifi.jetpackmvp.ui.statistics.StatisticsViewModel" />
     </data>
 
     <cn.wifi.jetpackmvp.view.ScrollChildSwipeRefreshLayout

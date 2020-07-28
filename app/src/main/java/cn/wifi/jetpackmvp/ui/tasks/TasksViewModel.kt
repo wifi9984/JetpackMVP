@@ -19,14 +19,25 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import cn.wifi.jetpackmvp.R
 import cn.wifi.jetpackmvp.data.model.Result
 import cn.wifi.jetpackmvp.data.model.Task
 import cn.wifi.jetpackmvp.data.source.TasksRepository
 import cn.wifi.jetpackmvp.util.Event
+import cn.wifi.jetpackmvp.data.model.Result.Success
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for the task list screen.
+ */
 class TasksViewModel @ViewModelInject constructor(
     private val tasksRepository: TasksRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
@@ -77,11 +88,12 @@ class TasksViewModel @ViewModelInject constructor(
     private var resultMessageShown: Boolean = false
 
     // This LiveData depends on another so we can use a transformation.
-    var empty: LiveData<Boolean> = Transformations.map(_items) {
+    val empty: LiveData<Boolean> = Transformations.map(_items) {
         it.isEmpty()
     }
 
     init {
+        // Set initial state
         setFiltering(getSavedFilterType())
         loadTasks(true)
     }
@@ -96,6 +108,7 @@ class TasksViewModel @ViewModelInject constructor(
     fun setFiltering(requestType: TasksFilterType) {
         savedStateHandle.set(TASKS_FILTER_SAVED_STATE_KEY, requestType)
 
+        // Depending on the filter type, set the filtering label, icon drawables, etc.
         when (requestType) {
             TasksFilterType.ALL_TASKS -> {
                 setFilter(
@@ -116,18 +129,18 @@ class TasksViewModel @ViewModelInject constructor(
                 )
             }
         }
-
+        // Refresh list
         loadTasks(false)
     }
 
     private fun setFilter(
         @StringRes filteringLabelString: Int,
-        @StringRes noTaskLabelString: Int,
+        @StringRes noTasksLabelString: Int,
         @DrawableRes noTaskIconDrawable: Int,
         tasksAddVisible: Boolean
     ) {
         _currentFilteringLabel.value = filteringLabelString
-        _noTasksLabel.value = noTaskLabelString
+        _noTasksLabel.value = noTasksLabelString
         _noTaskIconRes.value = noTaskIconDrawable
         _tasksAddViewVisible.value = tasksAddVisible
     }
@@ -181,7 +194,7 @@ class TasksViewModel @ViewModelInject constructor(
         // TODO: This is a good case for liveData builder. Replace when stable.
         val result = MutableLiveData<List<Task>>()
 
-        if (tasksResult is Result.Success) {
+        if (tasksResult is Success) {
             isDataLoadingError.value = false
             viewModelScope.launch {
                 result.value = filterItems(tasksResult.data, getSavedFilterType())
@@ -226,7 +239,6 @@ class TasksViewModel @ViewModelInject constructor(
     private fun getSavedFilterType(): TasksFilterType {
         return savedStateHandle.get(TASKS_FILTER_SAVED_STATE_KEY) ?: TasksFilterType.ALL_TASKS
     }
-
 }
 
 // Used to save the current filtering in SavedStateHandle.
