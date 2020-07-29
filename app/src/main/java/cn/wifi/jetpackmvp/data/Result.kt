@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.wifi.jetpackmvp.data.model
+package cn.wifi.jetpackmvp.data
 
 import kotlin.Exception
 
@@ -24,13 +24,13 @@ import kotlin.Exception
 sealed class Result<out R> {
 
     data class Success<out T>(val data: T) : Result<T>()
-    data class Error(val exception: Exception) : Result<Nothing>()
+    data class Error(val errorMessage: String) : Result<Nothing>()
     object Loading : Result<Nothing>()
 
     override fun toString(): String {
         return when (this) {
             is Success<*> -> "Success[data=$data]"
-            is Error -> "Error[exception=$exception]"
+            is Error -> "Error[errorMessage=$errorMessage]"
             Loading -> "Loading"
         }
     }

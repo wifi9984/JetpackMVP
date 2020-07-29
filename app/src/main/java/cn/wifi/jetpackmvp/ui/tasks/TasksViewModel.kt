@@ -28,11 +28,11 @@ import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import cn.wifi.jetpackmvp.R
-import cn.wifi.jetpackmvp.data.model.Result
+import cn.wifi.jetpackmvp.data.Result
 import cn.wifi.jetpackmvp.data.model.Task
 import cn.wifi.jetpackmvp.data.source.TasksRepository
 import cn.wifi.jetpackmvp.util.Event
-import cn.wifi.jetpackmvp.data.model.Result.Success
+import cn.wifi.jetpackmvp.data.Result.Success
 import kotlinx.coroutines.launch
 
 /**

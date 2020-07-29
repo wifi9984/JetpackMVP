@@ -17,24 +17,20 @@ package cn.wifi.jetpackmvp.data.source
 
 import androidx.lifecycle.LiveData
 import cn.wifi.jetpackmvp.data.model.Task
-import cn.wifi.jetpackmvp.data.model.Result
-import cn.wifi.jetpackmvp.data.model.Result.Success
-import cn.wifi.jetpackmvp.data.model.Result.Error
+import cn.wifi.jetpackmvp.data.Result
+import cn.wifi.jetpackmvp.data.Result.Success
+import cn.wifi.jetpackmvp.data.source.local.TasksDao
+import cn.wifi.jetpackmvp.data.source.remote.TasksService
 import cn.wifi.jetpackmvp.util.wrapEspressoIdlingResource
 import kotlinx.coroutines.*
-import timber.log.Timber
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Default implementation of [TasksRepository]. Single entry point for managing tasks' data.
  */
-class DefaultTasksRepository(
-    private val tasksRemoteDataSource: TasksDataSource,
-    private val tasksLocalDataSource: TasksDataSource,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+class DefaultTasksRepository @Inject constructor(
+    private val tasksDao: TasksDao,
+    private val tasksService: TasksService
 ) : TasksRepository {
 
     override suspend fun getTasks(forceUpdate: Boolean): Result<List<Task>> {

@@ -17,7 +17,7 @@ package cn.wifi.jetpackmvp.data.source
 
 import androidx.lifecycle.LiveData
 import cn.wifi.jetpackmvp.data.model.Task
-import cn.wifi.jetpackmvp.data.model.Result
+import cn.wifi.jetpackmvp.data.Result
 
 /**
  * Interface to the data layer.

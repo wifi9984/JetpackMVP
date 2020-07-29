@@ -4,12 +4,12 @@ import androidx.annotation.StringRes
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import cn.wifi.jetpackmvp.R
-import cn.wifi.jetpackmvp.data.model.Result
+import cn.wifi.jetpackmvp.data.Result
 import cn.wifi.jetpackmvp.data.model.Task
 import cn.wifi.jetpackmvp.data.source.TasksRepository
 import cn.wifi.jetpackmvp.util.Event
 import kotlinx.coroutines.launch
-import cn.wifi.jetpackmvp.data.model.Result.Success
+import cn.wifi.jetpackmvp.data.Result.Success
 
 /**
  * ViewModel for the Details screen.

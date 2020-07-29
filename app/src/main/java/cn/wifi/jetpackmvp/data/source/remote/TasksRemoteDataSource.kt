@@ -19,9 +19,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import cn.wifi.jetpackmvp.data.model.Task
-import cn.wifi.jetpackmvp.data.model.Result
-import cn.wifi.jetpackmvp.data.model.Result.Success
-import cn.wifi.jetpackmvp.data.model.Result.Error
+import cn.wifi.jetpackmvp.data.Result
+import cn.wifi.jetpackmvp.data.Result.Success
+import cn.wifi.jetpackmvp.data.Result.Error
 import cn.wifi.jetpackmvp.data.source.TasksDataSource
 import kotlinx.coroutines.delay
 

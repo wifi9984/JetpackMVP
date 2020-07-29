@@ -18,15 +18,13 @@ package cn.wifi.jetpackmvp.data.source.local
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import cn.wifi.jetpackmvp.data.model.Task
-import cn.wifi.jetpackmvp.data.model.Result
-import cn.wifi.jetpackmvp.data.model.Result.Success
-import cn.wifi.jetpackmvp.data.model.Result.Error
+import cn.wifi.jetpackmvp.data.Result
+import cn.wifi.jetpackmvp.data.Result.Success
+import cn.wifi.jetpackmvp.data.Result.Error
 import cn.wifi.jetpackmvp.data.source.TasksDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Concrete implementation of a data source as a db.

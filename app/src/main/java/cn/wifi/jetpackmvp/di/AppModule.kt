@@ -5,9 +5,14 @@ import androidx.room.Room
 import cn.wifi.jetpackmvp.data.source.DefaultTasksRepository
 import cn.wifi.jetpackmvp.data.source.TasksDataSource
 import cn.wifi.jetpackmvp.data.source.TasksRepository
+import cn.wifi.jetpackmvp.data.source.local.TasksDao
 import cn.wifi.jetpackmvp.data.source.local.TasksLocalDataSource
 import cn.wifi.jetpackmvp.data.source.local.ToDoDatabase
 import cn.wifi.jetpackmvp.data.source.remote.TasksRemoteDataSource
+import cn.wifi.jetpackmvp.data.source.remote.TasksService
+import cn.wifi.jetpackmvp.util.ApiResponseCallAdapterFactory
+import cn.wifi.jetpackmvp.util.LiveDataCallAdapter
+import cn.wifi.jetpackmvp.util.LiveDataCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +20,8 @@ import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -28,29 +35,22 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 object AppModule {
 
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class RemoteTasksDataSource
-
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class LocalTasksDataSource
-
     @Singleton
-    @RemoteTasksDataSource
     @Provides
-    fun provideTasksRemoteDataSource(): TasksDataSource {
-        return TasksRemoteDataSource
+    fun provideTasksService(): TasksService {
+        return Retrofit.Builder()
+            .baseUrl("")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(LiveDataCallAdapterFactory())
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory())
+            .build()
+            .create(TasksService::class.java)
     }
 
     @Singleton
-    @LocalTasksDataSource
     @Provides
-    fun provideTasksLocalDataSource(
-        database: ToDoDatabase,
-        ioDispatcher: CoroutineDispatcher
-    ): TasksDataSource {
-        return TasksLocalDataSource(database.taskDao(), ioDispatcher)
+    fun provideTasksDao(db: ToDoDatabase): TasksDao {
+        return db.taskDao()
     }
 
     @Singleton
@@ -61,27 +61,5 @@ object AppModule {
             ToDoDatabase::class.java,
             "Tasks.db"
         ).build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideIoDispatcher() = Dispatchers.IO
-}
-
-/**
- * The binding for TasksRepository is on its own module so that we can replace it easily in tests.
- */
-@Module
-@InstallIn(ApplicationComponent::class)
-object TasksRepositoryModule {
-
-    @Singleton
-    @Provides
-    fun provideTasksRepository(
-        @AppModule.RemoteTasksDataSource remoteTasksDataSource: TasksDataSource,
-        @AppModule.LocalTasksDataSource localDataSource: TasksDataSource,
-        ioDispatcher: CoroutineDispatcher
-    ): TasksRepository {
-        return DefaultTasksRepository(remoteTasksDataSource, localDataSource, ioDispatcher)
     }
 }

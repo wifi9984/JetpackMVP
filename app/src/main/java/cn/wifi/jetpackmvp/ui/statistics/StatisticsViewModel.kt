@@ -6,10 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import cn.wifi.jetpackmvp.data.model.Result
+import cn.wifi.jetpackmvp.data.Result
 import cn.wifi.jetpackmvp.data.model.Task
 import cn.wifi.jetpackmvp.data.source.TasksRepository
-import cn.wifi.jetpackmvp.data.model.Result.Success
+import cn.wifi.jetpackmvp.data.Result.Success
 import kotlinx.coroutines.launch
 
 /**
